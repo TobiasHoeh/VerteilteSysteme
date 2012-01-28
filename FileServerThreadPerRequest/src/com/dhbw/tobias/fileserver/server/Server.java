@@ -18,18 +18,9 @@ public class Server {
 				DatagramPacket packet = new DatagramPacket(data,
 						MAX_PACKET_SIZE);
 				server.receive(packet);
-
-				String message = new String(packet.getData(), 0,
-						packet.getLength());
-				packet.setLength(MAX_PACKET_SIZE);
-				System.out.println(message);
-				if (message.equals("READ")) {
-					System.out.println("READ FILE");
-				} else if (message.equals("WRITE")) {
-					System.out.println("WRITE FILE");
-				} else {
-					System.out.println("Unknown Command");
-				}
+				Worker worker = new Worker(packet);
+				Thread workerThread = new Thread(worker);
+				workerThread.start();
 			}
 
 		} catch (IOException e) {
