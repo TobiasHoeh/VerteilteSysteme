@@ -5,54 +5,48 @@ public class HogwartsMonitor {
 	private final int Huffelpuff = 3;
 
 	private boolean activeJinx = false;
-	private int gQueue = 0;
-	private int sQueue = 0;
-	private int rQueue = 0;
-	private int hQueue = 0;
+	private int[] queue = new int[4];
 
 	public HogwartsMonitor() {
 
 	}
 
 	public synchronized void jinxSpoken(int haus) {
-		if (activeJinx == true || gQueue != 0 || sQueue != 0 || rQueue != 0
-				|| hQueue != 0) {
-			try {
-				switch (haus) {
-				case 0:
-					gQueue++;
-					while (activeJinx == true || sQueue != 0 || rQueue != 0
-							|| hQueue != 0) {
-						wait();
-					}
-					gQueue--;
-					break;
-				case 1:
-					sQueue++;
-					while (activeJinx == true || rQueue != 0 || hQueue != 0) {
-						wait();
-					}
-					sQueue--;
-					break;
-				case 2:
-					rQueue++;
-					while (activeJinx == true || hQueue != 0) {
-						wait();
-					}
-					rQueue--;
-					break;
-				case 3:
-					hQueue++;
-					while (activeJinx == true) {
-						wait();
-					}
-					hQueue--;
-					break;
+		try {
+			switch (haus) {
+			case 0:
+				queue[Gryffindor]++;
+				while (activeJinx == true || queue[Slytherin] != 0
+						|| queue[Ravenclaw] != 0 || queue[Huffelpuff] != 0) {
+					wait();
 				}
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				queue[Gryffindor]--;
+				break;
+			case 1:
+				queue[Slytherin]++;
+				while (activeJinx == true || queue[Ravenclaw] != 0
+						|| queue[Huffelpuff] != 0) {
+					wait();
+				}
+				queue[Slytherin]--;
+				break;
+			case 2:
+				queue[Ravenclaw]++;
+				while (activeJinx == true || queue[Huffelpuff] != 0) {
+					wait();
+				}
+				queue[Ravenclaw]--;
+				break;
+			case 3:
+				queue[Huffelpuff]++;
+				while (activeJinx == true) {
+					wait();
+				}
+				queue[Huffelpuff]--;
+				break;
 			}
+		} catch (InterruptedException e) {
+			e.printStackTrace();
 		}
 		activeJinx = true;
 	}
