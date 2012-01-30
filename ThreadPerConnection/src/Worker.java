@@ -14,7 +14,7 @@ public class Worker extends Thread {
 		monitor.startGame();
 		System.out.println("Playing Game");
 		try {
-			Thread.sleep(8000);
+			Thread.sleep((long) (Math.random() * 10000));
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
