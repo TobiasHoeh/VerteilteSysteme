@@ -13,6 +13,7 @@ public class FileAccessMonitor {
 	private String fileName;
 	private static ArrayList<FileAccessMonitor> fileList = new ArrayList<FileAccessMonitor>();
 	private int readerCount;
+	private int writerCount;
 	private boolean activeWriter;
 
 	private FileAccessMonitor(String fileName) {
@@ -38,7 +39,7 @@ public class FileAccessMonitor {
 	}
 
 	public synchronized void startRead() {
-		if (activeWriter) {
+		while (writerCount > 0) {
 			try {
 				wait();
 			} catch (InterruptedException e) {
@@ -51,11 +52,14 @@ public class FileAccessMonitor {
 
 	public synchronized void endRead() {
 		readerCount--;
-		notify();
+		if (readerCount == 0) {
+			notifyAll();
+		}
 	}
 
 	public synchronized void startWrite() {
-		if (activeWriter || readerCount != 0) {
+		writerCount++;
+		while (activeWriter || readerCount > 0) {
 			try {
 				wait();
 			} catch (InterruptedException e) {
@@ -67,8 +71,9 @@ public class FileAccessMonitor {
 	}
 
 	public synchronized void endWrite() {
+		writerCount--;
 		activeWriter = false;
-		notify();
+		notifyAll();
 	}
 
 	public String read(int lineNo) {

@@ -1,8 +1,6 @@
 package com.dhbw.tobias.fileserver.client;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -17,29 +15,67 @@ public class Client {
 			DatagramSocket socket = new DatagramSocket();
 			InetAddress server = InetAddress.getByName("localhost");
 
-			BufferedReader reader = new BufferedReader(new InputStreamReader(
-					System.in));
-			System.out.print("Type command to send!");
-			System.out.println("(''READ file,lineNo'' or 'x' to exit)");
+			// BufferedReader reader = new BufferedReader(new InputStreamReader(
+			// System.in));
+			// System.out.print("Type command to send!");
+			// System.out.println("(''READ file,lineNo'' or 'x' to exit)");
 			String command = null;
-			System.out.print("> ");
-			while ((command = reader.readLine()) != null) {
-				if (command.equals("ENDE")) {
-					System.exit(1);
-				} else {
-					DatagramPacket packet = new DatagramPacket(
-							command.getBytes(), command.length(), server,
-							SERVER_PORT);
-					socket.send(packet);
-					byte[] message = new byte[MAX_PACKET_LENGTH];
-					DatagramPacket inPacket = new DatagramPacket(message,
-							MAX_PACKET_LENGTH);
-					socket.receive(inPacket);
-					System.out.println(new String(inPacket.getData(), 0,
-							inPacket.getLength()));
-				}
-				System.out.print("> ");
-			}
+			// System.out.print("> ");
+
+			command = "WRITE test.txt,2,test";
+			DatagramPacket packet = new DatagramPacket(command.getBytes(),
+					command.length(), server, SERVER_PORT);
+			socket.send(packet);
+			command = "READ test.txt,2";
+			packet = new DatagramPacket(command.getBytes(), command.length(),
+					server, SERVER_PORT);
+			socket.send(packet);
+			command = "READ test.txt,1";
+			packet = new DatagramPacket(command.getBytes(), command.length(),
+					server, SERVER_PORT);
+			socket.send(packet);
+			command = "WRITE hallo.txt,2,HallWelt";
+			packet = new DatagramPacket(command.getBytes(), command.length(),
+					server, SERVER_PORT);
+			socket.send(packet);
+			command = "READ test.txt,2";
+			packet = new DatagramPacket(command.getBytes(), command.length(),
+					server, SERVER_PORT);
+			socket.send(packet);
+			command = "READ hallo.txt,2";
+			packet = new DatagramPacket(command.getBytes(), command.length(),
+					server, SERVER_PORT);
+			socket.send(packet);
+			command = "WRITE hallo.txt,2,NEUERTEXT";
+			packet = new DatagramPacket(command.getBytes(), command.length(),
+					server, SERVER_PORT);
+			socket.send(packet);
+			command = "READ hallo.txt,2";
+			packet = new DatagramPacket(command.getBytes(), command.length(),
+					server, SERVER_PORT);
+			socket.send(packet);
+			command = "READ hallo.txt,2";
+			packet = new DatagramPacket(command.getBytes(), command.length(),
+					server, SERVER_PORT);
+			socket.send(packet);
+
+			// while ((command = reader.readLine()) != null) {
+			// if (command.equals("ENDE")) {
+			// System.exit(1);
+			// } else {
+			// DatagramPacket packet = new DatagramPacket(
+			// command.getBytes(), command.length(), server,
+			// SERVER_PORT);
+			// socket.send(packet);
+			// byte[] message = new byte[MAX_PACKET_LENGTH];
+			// DatagramPacket inPacket = new DatagramPacket(message,
+			// MAX_PACKET_LENGTH);
+			// socket.receive(inPacket);
+			// System.out.println(new String(inPacket.getData(), 0,
+			// inPacket.getLength()));
+			// }
+			// System.out.print("> ");
+			// }
 
 		} catch (SocketException e) {
 			e.printStackTrace();
